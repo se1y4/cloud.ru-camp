@@ -8,10 +8,10 @@ backends:
 
 rate_limiter:
   default_capacity: 10    
-  default_rate: 10 
+  default_rate: 1 
   refill_interval: "1s"
 
 balancer:
   strategy: "round-robin"
-  health_check_interval: "10s"
+  health_check_interval: "1s"
   health_check_endpoint: "/health"

@@ -27,6 +27,13 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+    command: >
+      sh -c "
+      mkdir -p /usr/share/nginx/html &&
+      echo 'Healthy' > /usr/share/nginx/html/health &&
+      echo '<h1>Backend 1</h1>' > /usr/share/nginx/html/index.html &&
+      exec nginx -g 'daemon off;'
+      "
 
   backend2:
     image: nginx
@@ -39,3 +46,28 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+    command: >
+      sh -c "
+      mkdir -p /usr/share/nginx/html &&
+      echo 'Healthy' > /usr/share/nginx/html/health &&
+      echo '<h1>Backend 2</h1>' > /usr/share/nginx/html/index.html &&
+      exec nginx -g 'daemon off;'
+      "
+  backend3:
+    image: nginx
+    ports:
+      - "8083:80"
+    volumes:
+      - ./backend3:/usr/share/nginx/html
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    command: >
+      sh -c "
+      mkdir -p /usr/share/nginx/html &&
+      echo 'Healthy' > /usr/share/nginx/html/health &&
+      echo '<h1>Backend 3</h1>' > /usr/share/nginx/html/index.html &&
+      exec nginx -g 'daemon off;'
+      "

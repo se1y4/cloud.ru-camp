@@ -1,0 +1,15 @@
+server:
+  port: "8080"
+
+backends:
+  - "http://backend1:80"
+  - "http://backend2:80"
+
+rate_limiter:
+  default_capacity: 100
+  default_rate: 10
+  refill_interval: 1s
+
+balancer:
+  strategy: "round-robin"
+  health_check_interval: 10s

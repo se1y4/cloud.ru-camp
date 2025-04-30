@@ -1,4 +1,4 @@
-# 🚀 Highload HTTP Load Balancer
+# 🚀 Highload Balancer
 
 ![Go](https://img.shields.io/badge/Go-1.19+-00ADD8?logo=go)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-13+-336791?logo=postgresql)

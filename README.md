@@ -27,7 +27,7 @@
 - Docker 20.10+
 - Docker Compose 2.0+
 ```bash
-git clone https://github.com/your-repo/highload-balancer.git
+git clone https://github.com/se1y4/highload-balancer.git
 cd highload-balancer
 docker-compose up --build
 ```

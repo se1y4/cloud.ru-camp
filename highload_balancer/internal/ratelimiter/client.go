@@ -166,3 +166,19 @@ func (rl *RateLimiter) AllowWithConfig(clientID string, config *ClientConfig) bo
 	}
 	return false
 }
+
+func (cm *ClientManager) UpdateClient(client *ClientConfig) error {
+	if client.ClientID == "" {
+		return fmt.Errorf("client_id cannot be empty")
+	}
+
+	if err := cm.storage.SaveClient(client); err != nil {
+		return fmt.Errorf("database error: %w", err)
+	}
+
+	cm.mux.Lock()
+	cm.clients[client.ClientID] = client
+	cm.mux.Unlock()
+
+	return nil
+}

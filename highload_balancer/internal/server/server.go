@@ -53,6 +53,8 @@ func (s *Server) handleClientsAPI(w http.ResponseWriter, r *http.Request) {
 		s.createClient(w, r)
 	case http.MethodDelete:
 		s.deleteClient(w, r)
+	case http.MethodPatch:
+		s.patchClient(w, r)
 	default:
 		utils.WriteErrorResponse(w, http.StatusMethodNotAllowed, "Method not allowed")
 	}
@@ -151,4 +153,42 @@ func (s *Server) handleProxyRequest(w http.ResponseWriter, r *http.Request) {
 	}
 
 	s.balancer.ServeHTTP(w, r)
+}
+
+func (s *Server) patchClient(w http.ResponseWriter, r *http.Request) {
+	clientID := r.URL.Query().Get("client_id")
+	if clientID == "" {
+		utils.WriteErrorResponse(w, http.StatusBadRequest, "client_id parameter is required")
+		return
+	}
+
+	currentClient, exists := s.clientManager.GetClientConfig(clientID)
+	if !exists {
+		utils.WriteErrorResponse(w, http.StatusNotFound, "Client not found")
+		return
+	}
+
+	var patchData struct {
+		Capacity   *int `json:"capacity,omitempty"`
+		RatePerSec *int `json:"rate_per_sec,omitempty"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&patchData); err != nil {
+		utils.WriteErrorResponse(w, http.StatusBadRequest, "Invalid patch data")
+		return
+	}
+
+	if patchData.Capacity != nil {
+		currentClient.Capacity = *patchData.Capacity
+	}
+	if patchData.RatePerSec != nil {
+		currentClient.RatePerSec = *patchData.RatePerSec
+	}
+
+	if err := s.clientManager.UpdateClient(currentClient); err != nil {
+		utils.WriteErrorResponse(w, http.StatusInternalServerError, "Failed to update client")
+		return
+	}
+
+	utils.WriteJSONResponse(w, http.StatusOK, currentClient)
 }

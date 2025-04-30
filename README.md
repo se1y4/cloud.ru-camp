@@ -37,6 +37,7 @@ docker-compose up --build
 | POST           | /api/clients                 | Создание нового клиента        |
 | GET            | /api/clients?client_id=<id>  | Получение информации о клиенте |
 | DELETE         | /api/clients?client_id=<id>  | Удаление клиента               |
+
 Пример запроса
 ```bash
 curl -X POST http://localhost:8080/api/clients \

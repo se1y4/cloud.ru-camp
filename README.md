@@ -24,8 +24,8 @@
 ## 🛠 Быстрый старт
 
 ### Требования
--Docker 20.10+
--Docker Compose 2.0+
+- Docker 20.10+
+- Docker Compose 2.0+
 ```bash
 git clone https://github.com/your-repo/highload-balancer.git
 cd highload-balancer

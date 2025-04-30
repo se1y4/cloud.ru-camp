@@ -1,6 +1,6 @@
 FROM golang:1.23-alpine AS builder
 
-RUN apk add --no-cache git make
+RUN apk add --no-cache git make postgresql-client
 
 WORKDIR /app
 
@@ -14,12 +14,13 @@ RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o /load-balancer ./cmd/m
 
 FROM alpine:3.18
 
-RUN apk add --no-cache ca-certificates tzdata
+RUN apk add --no-cache ca-certificates tzdata postgresql-client
 
 WORKDIR /app
 
 COPY --from=builder /load-balancer .
 COPY config.yaml .
+COPY migrations ./migrations
 
 EXPOSE 8080
 

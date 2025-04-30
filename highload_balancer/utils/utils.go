@@ -33,3 +33,15 @@ func WriteJSONResponse(w http.ResponseWriter, status int, data interface{}) {
 	w.WriteHeader(status)
 	json.NewEncoder(w).Encode(data)
 }
+
+type ErrorResponse struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+}
+
+func WriteErrorResponse(w http.ResponseWriter, status int, message string) {
+	WriteJSONResponse(w, status, ErrorResponse{
+		Code:    status,
+		Message: message,
+	})
+}

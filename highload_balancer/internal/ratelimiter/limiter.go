@@ -8,7 +8,7 @@ import (
 type TokenBucket struct {
 	capacity   int
 	tokens     int
-	rate       int 
+	rate       int
 	lastRefill time.Time
 	mux        sync.Mutex
 }
@@ -99,6 +99,12 @@ func (rl *RateLimiter) Allow(clientID string) bool {
 		return true
 	}
 	return false
+}
+
+func (rl *RateLimiter) RemoveBucket(clientID string) {
+	rl.mux.Lock()
+	defer rl.mux.Unlock()
+	delete(rl.buckets, clientID)
 }
 
 func min(a, b int) int {

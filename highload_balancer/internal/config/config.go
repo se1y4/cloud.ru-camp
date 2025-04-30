@@ -21,6 +21,9 @@ type Config struct {
 		Strategy            string        `yaml:"strategy"`
 		HealthCheckInterval time.Duration `yaml:"health_check_interval"`
 	} `yaml:"balancer"`
+	Postgres struct {
+        ConnString string `yaml:"conn_string"`
+    } `yaml:"postgres"`
 }
 
 func LoadConfig(path string) (*Config, error) {

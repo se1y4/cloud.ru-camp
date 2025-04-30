@@ -1,11 +1,29 @@
-version: '3.8'
-
 services:
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: loadbalancer
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d loadbalancer"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   load-balancer:
     build: .
     ports:
       - "8080:8080"
+    environment:
+      POSTGRES_CONN_STRING: "postgres://user:password@postgres:5432/loadbalancer?sslmode=disable"
     depends_on:
+      postgres:
+        condition: service_healthy
       backend1:
         condition: service_healthy
       backend2:
@@ -55,6 +73,7 @@ services:
       echo '<h1>Backend 2</h1>' > /usr/share/nginx/html/index.html &&
       exec nginx -g 'daemon off;'
       "
+
   backend3:
     image: nginx
     ports:
@@ -73,3 +92,6 @@ services:
       echo '<h1>Backend 3</h1>' > /usr/share/nginx/html/index.html &&
       exec nginx -g 'daemon off;'
       "
+
+volumes:
+  postgres_data:

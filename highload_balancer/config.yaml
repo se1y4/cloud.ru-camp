@@ -1,17 +1,19 @@
 server:
-  port: "8080"  
+  port: "8080"
 
 backends:
-  - "http://backend1:80"  
+  - "http://backend1:80"
   - "http://backend2:80"
   - "http://backend3:80"
 
 rate_limiter:
-  default_capacity: 10    
-  default_rate: 1 
+  default_capacity: 10
+  default_rate: 1
   refill_interval: "1s"
 
 balancer:
   strategy: "round-robin"
   health_check_interval: "1s"
-  health_check_endpoint: "/health"
+
+postgres:
+  conn_string: "postgres://user:password@postgres:5432/loadbalancer?sslmode=disable"

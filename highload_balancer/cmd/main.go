@@ -9,6 +9,7 @@ import (
 	"syscall"
 	"time"
 
+	_ "github.com/lib/pq"
 	"github.com/se1y4/highload-balancer/internal/balancer"
 	"github.com/se1y4/highload-balancer/internal/config"
 	"github.com/se1y4/highload-balancer/internal/ratelimiter"
@@ -19,6 +20,16 @@ func main() {
 	cfg, err := config.LoadConfig("config.yaml")
 	if err != nil {
 		log.Fatalf("Error loading config: %v", err)
+	}
+
+	pgStorage, err := ratelimiter.NewPostgresStorage(cfg.Postgres.ConnString)
+	if err != nil {
+		log.Fatalf("Failed to init PostgreSQL: %v", err)
+	}
+	defer pgStorage.Close()
+
+	if err := pgStorage.InitSchema(); err != nil {
+		log.Fatalf("Failed to init schema: %v", err)
 	}
 
 	strategy := balancer.NewStrategy(balancer.StrategyType(cfg.Balancer.Strategy))
@@ -37,7 +48,9 @@ func main() {
 	)
 	defer rl.Stop()
 
-	srv := server.NewServer(lb, rl)
+	clientManager := ratelimiter.NewClientManager(pgStorage)
+	srv := server.NewServer(lb, rl, clientManager)
+
 	httpServer := &http.Server{
 		Addr:    ":" + cfg.Server.Port,
 		Handler: srv,

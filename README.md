@@ -34,12 +34,17 @@ docker-compose up --build
 ### 📚 Документация API
 | Метод          | Endpoint                     | Описание                        |
 |----------------|------------------------------|---------------------------------|
-| POST           | /api/clients                 | Создание нового клиента        |
-| GET            | /api/clients?client_id=<id>  | Получение информации о клиенте |
-| DELETE         | /api/clients?client_id=<id>  | Удаление клиента               |
+| POST           | /api/clients                 | Создание нового клиента         |
+| GET            | /api/clients?client_id=<id>  | Получение информации о клиенте  |
+| DELETE         | /api/clients?client_id=<id>  | Удаление клиента                |
+| PATCH          | /api/clients?client_id=<id>  | Обновление клиента
 
 Пример запроса
 ```bash
+curl -X PATCH "http://localhost:8080/api/clients?client_id=test-client" \
+  -H "Content-Type: application/json" \
+  -d '{"capacity": 200}'
+
 curl -X POST http://localhost:8080/api/clients \
   -H "Content-Type: application/json" \
   -d '{"client_id":"test-client","capacity":100,"rate_per_sec":10}'
